@@ -29,6 +29,7 @@ public class PlayerController : MonoBehaviour
     private Animator animator;
     private AudioSource audioSource;
     private SpriteRenderer spriteRenderer;
+    private PlayerInputHandler inputHandler;
     
     // Movement state
     private bool isGrounded;
@@ -53,6 +54,7 @@ public class PlayerController : MonoBehaviour
         animator = GetComponent<Animator>();
         audioSource = GetComponent<AudioSource>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        inputHandler = GetComponent<PlayerInputHandler>();
         
         if (groundCheck == null)
         {
@@ -67,11 +69,66 @@ public class PlayerController : MonoBehaviour
         }
     }
     
+    void Start()
+    {
+        SetupInputHandler();
+    }
+    
     void Update()
     {
-        HandleMobileInput();
+        HandleInput();
         CheckGrounded();
         UpdateAnimations();
+    }
+    
+    void SetupInputHandler()
+    {
+        if (inputHandler != null)
+        {
+            inputHandler.OnMoveInput += OnMoveInput;
+            inputHandler.OnJumpPressed += OnJumpPressed;
+            inputHandler.OnJumpReleased += OnJumpReleased;
+            inputHandler.OnDoubleJumpPressed += OnDoubleJumpPressed;
+        }
+    }
+    
+    void HandleInput()
+    {
+        if (inputHandler != null)
+        {
+            Vector2 moveInput = inputHandler.GetMoveInput();
+            horizontalInput = moveInput.x;
+        }
+    }
+    
+    void OnMoveInput(Vector2 moveInput)
+    {
+        horizontalInput = moveInput.x;
+    }
+    
+    void OnJumpPressed()
+    {
+        if (isGrounded)
+        {
+            Jump();
+        }
+        else if (canDoubleJump && !hasDoubleJumped)
+        {
+            DoubleJump();
+        }
+    }
+    
+    void OnJumpReleased()
+    {
+        // Handle jump release if needed
+    }
+    
+    void OnDoubleJumpPressed()
+    {
+        if (canDoubleJump && !hasDoubleJumped)
+        {
+            DoubleJump();
+        }
     }
     
     void FixedUpdate()
@@ -81,70 +138,9 @@ public class PlayerController : MonoBehaviour
     
     void HandleMobileInput()
     {
-        // Handle touch input
-        if (Input.touchCount > 0)
-        {
-            Touch touch = Input.GetTouch(0);
-            
-            switch (touch.phase)
-            {
-                case TouchPhase.Began:
-                    touchStart = touch.position;
-                    isTouching = true;
-                    break;
-                    
-                case TouchPhase.Moved:
-                    if (isTouching)
-                    {
-                        Vector2 swipeDelta = touch.position - touchStart;
-                        
-                        // Horizontal movement
-                        if (Mathf.Abs(swipeDelta.x) > swipeThreshold)
-                        {
-                            horizontalInput = Mathf.Sign(swipeDelta.x);
-                        }
-                        
-                        // Jump on swipe up
-                        if (swipeDelta.y > swipeThreshold && isGrounded)
-                        {
-                            Jump();
-                        }
-                    }
-                    break;
-                    
-                case TouchPhase.Ended:
-                    if (isTouching)
-                    {
-                        // Check for tap to jump
-                        float tapTime = Time.time - lastTapTime;
-                        if (tapTime < tapThreshold && isGrounded)
-                        {
-                            Jump();
-                        }
-                        else if (tapTime < tapThreshold && canDoubleJump && !hasDoubleJumped)
-                        {
-                            DoubleJump();
-                        }
-                        
-                        lastTapTime = Time.time;
-                        horizontalInput = 0f;
-                        isTouching = false;
-                    }
-                    break;
-            }
-        }
-        
-        // Keyboard input for testing
-        #if UNITY_EDITOR
-        horizontalInput = Input.GetAxisRaw("Horizontal");
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            if (isGrounded)
-                Jump();
-            else if (canDoubleJump && !hasDoubleJumped)
-                DoubleJump();
-        }
-        #endif
+        // Input is now handled by PlayerInputHandler
+        // This method is kept for backward compatibility
+        // The actual input handling is done through events
     }
     
     void HandleMovement()
