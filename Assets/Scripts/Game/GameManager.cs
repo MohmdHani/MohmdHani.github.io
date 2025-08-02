@@ -189,15 +189,47 @@ public class GameManager : MonoBehaviour
         isLevelComplete = true;
         isGameActive = false;
         
-        // Calculate level score
+        // Calculate level score and stars
         int levelScore = CalculateLevelScore();
+        int stars = CalculateStars();
         AddScore(levelScore);
+        
+        // Save progress to level progress manager
+        if (LevelProgressManager.Instance != null)
+        {
+            LevelProgressManager.Instance.CompleteLevel(
+                currentLevel,
+                stars,
+                gameTime,
+                playerScore,
+                coinsCollected,
+                true, // allCoins - you can track this separately
+                true  // allEnemies - you can track this separately
+            );
+        }
         
         // Save progress
         SaveProgress();
         
         if (levelCompleteMenu) levelCompleteMenu.SetActive(true);
         OnLevelComplete?.Invoke();
+    }
+    
+    int CalculateStars()
+    {
+        int stars = 0;
+        
+        // Star 1: Complete level
+        stars++;
+        
+        // Star 2: Complete under time limit (e.g., 60 seconds)
+        if (gameTime < 60f) stars++;
+        
+        // Star 3: Collect all coins or defeat all enemies
+        // You can implement this based on your level requirements
+        if (coinsCollected >= 10) stars++; // Example threshold
+        
+        return Mathf.Min(stars, 3);
     }
     
     public void NextLevel()
