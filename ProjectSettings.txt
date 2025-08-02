@@ -1,0 +1,54 @@
+# Unity Project Settings for 2D Mobile Platformer
+
+## Project Settings
+- Unity Version: 2022.3 LTS or later
+- Platform: Android/iOS
+- Graphics API: OpenGL ES 3.0 (Android), Metal (iOS)
+- Target FPS: 60
+
+## Player Settings
+- Company Name: YourCompany
+- Product Name: 2D Platformer
+- Bundle Identifier: com.yourcompany.platformer
+- Version: 1.0.0
+
+## Quality Settings
+- Anti Aliasing: 2x Multi Sampling
+- Texture Quality: Full Res
+- Anisotropic Textures: Per Texture
+- Soft Particles: Enabled
+- Realtime Reflection Probes: Disabled
+
+## Physics 2D Settings
+- Gravity: (0, -9.81)
+- Default Material: Default
+- Velocity Iterations: 8
+- Position Iterations: 3
+
+## Input Manager
+- Horizontal: A/D, Left/Right Arrow, Joystick
+- Vertical: W/S, Up/Down Arrow, Joystick
+- Jump: Space, Joystick Button 0
+
+## Tags
+- Player
+- Enemy
+- Coin
+- Checkpoint
+- Ground
+- Hazard
+
+## Layers
+- Default (0)
+- Ground (8)
+- Player (9)
+- Enemy (10)
+- Collectible (11)
+- UI (12)
+
+## Scenes
+- MainMenu
+- Level1
+- Level2
+- Level3
+- Victory
